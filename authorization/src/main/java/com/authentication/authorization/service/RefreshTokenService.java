@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Ref;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,6 +29,10 @@ public class RefreshTokenService {
                 .expiryDate(Instant.now().plusMillis(60000))
                 .build();
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    public Optional<RefreshToken> findByToken(String token){
+        return refreshTokenRepository.findByToken(token);
     }
 
     public RefreshToken verifyExpiration(RefreshToken token){
