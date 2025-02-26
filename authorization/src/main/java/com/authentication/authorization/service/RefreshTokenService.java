@@ -21,13 +21,13 @@ public class RefreshTokenService {
     @Autowired
     UserRepository userRepository;
 
-    public RefreshToken createRefreshToken(String username){
+    public RefreshToken createRefreshToken(String username) {
         UserInfo userInfoExtracted = userRepository.findByUsername(username);
-        RefreshToken refreshToken = RefreshToken.builder()
-                .userInfo(userInfoExtracted)
-                .token(UUID.randomUUID().toString())
-                .expiryDate(Instant.now().plusMillis(60000))
-                .build();
+        RefreshToken refreshToken = new RefreshToken(
+                userInfoExtracted,
+                UUID.randomUUID().toString(),
+                Instant.now().plusMillis(60000)
+        );
         return refreshTokenRepository.save(refreshToken);
     }
 

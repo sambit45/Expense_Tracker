@@ -20,6 +20,7 @@ public class CustomUserDetails extends UserInfo implements UserDetails {
     Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(UserInfo byUsername){
+        super();
         this.userName = byUsername.getUsername();
         this.password = byUsername.getPassword();
         List<GrantedAuthority> auths = new ArrayList<>();

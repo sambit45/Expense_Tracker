@@ -18,15 +18,18 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Component
-@AllArgsConstructor
-@Data
 public class UserDetailsServiceImplementation implements UserDetailsService {
 
     @Autowired
-    private final UserRepository userRepository;
+    private  UserRepository userRepository;
 
     @Autowired
-    private final PasswordEncoder passwordEncoder;
+    private  PasswordEncoder passwordEncoder;
+
+    public UserDetailsServiceImplementation(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
@@ -37,8 +40,8 @@ public class UserDetailsServiceImplementation implements UserDetailsService {
         return new CustomUserDetails(user);
     }
 
-    public UserInfo checkIfUserAlreadyExist(UserInfo userInfo){
-        return userRepository.findByUsername(userInfo.getUsername());
+    public UserInfo checkIfUserAlreadyExist(UserInfoDto userInfoDto){
+        return userRepository.findByUsername(userInfoDto.getUsername());
     }
 
     public Boolean signupUser(UserInfoDto userInfoDto){
