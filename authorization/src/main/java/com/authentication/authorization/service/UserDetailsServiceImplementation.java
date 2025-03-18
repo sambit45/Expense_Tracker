@@ -1,10 +1,9 @@
 package com.authentication.authorization.service;
 
 import com.authentication.authorization.entities.UserInfo;
+import com.authentication.authorization.eventProducer.UserInfoProducer;
 import com.authentication.authorization.model.UserInfoDto;
 import com.authentication.authorization.repository.UserRepository;
-import io.jsonwebtoken.security.Password;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,9 +25,13 @@ public class UserDetailsServiceImplementation implements UserDetailsService {
     @Autowired
     private  PasswordEncoder passwordEncoder;
 
-    public UserDetailsServiceImplementation(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    @Autowired
+    private final UserInfoProducer userInfoProducer;
+
+    public UserDetailsServiceImplementation(UserRepository userRepository, PasswordEncoder passwordEncoder, UserInfoProducer userInfoProducer) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userInfoProducer = userInfoProducer;
     }
 
     @Override
@@ -52,6 +55,9 @@ public class UserDetailsServiceImplementation implements UserDetailsService {
         }
         String userId = UUID.randomUUID().toString();
         userRepository.save(new UserInfo(userId,userInfoDto.getUsername(),userInfoDto.getPassword(),new HashSet<>()));
+
+        userInfoProducer.sendEventToKafka(userInfoDto);
+
         return true;
     }
 
